@@ -67,7 +67,7 @@ function StockForm({ onSubmit }: StockFormProps) {
       {/* Header */}
       <div className="text-center mb-3 sm:mb-6">
         <h2 className="text-sm sm:text-lg font-bold text-gray-800">
-          Compare vs S&P 500
+          Compare Stocks/ETFs vs S&P 500
         </h2>
       </div>
 
