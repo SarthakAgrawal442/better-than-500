@@ -81,45 +81,38 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-1xl font-bold text-gray-800">
-          Compare Home Ownership vs Renting + S&P 500 Investing
+      <div className="text-center mb-3 sm:mb-6">
+        <h2 className="text-sm sm:text-lg font-bold text-gray-800">
+          Home vs Rent + S&P 500
         </h2>
-        {/* <p className="text-gray-600">
-          Compare home ownership against renting + S&P 500 investing
-        </p> */}
-        {/* <p className="text-xs text-gray-500 mt-2">
-          We'll compare buying this property vs renting and investing the
-          difference in S&P 500
-        </p> */}
       </div>
 
       {/* Investment Name */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
           Investment Name
         </label>
         <input
           type="text"
           placeholder="My Property"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           value={formData.name}
           onChange={(e) => updateField("name", e.target.value)}
         />
       </div>
 
       {/* Property Value and Down Payment */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Property Value ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Property ($)
           </label>
           <input
             type="number"
             placeholder="500000"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.propertyValue}
             onChange={(e) => handlePropertyValueChange(e.target.value)}
             min="0"
@@ -128,13 +121,13 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Down Payment ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Down Pay ($)
           </label>
           <input
             type="number"
             placeholder="100000"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.downPayment}
             onChange={(e) => updateField("downPayment", e.target.value)}
             min="0"
@@ -145,15 +138,15 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       </div>
 
       {/* Mortgage Rate and Loan Term */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Mortgage Interest Rate (%)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Mortgage (%)
           </label>
           <input
             type="number"
             placeholder="4"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.annualMortgageInterestRate}
             onChange={(e) =>
               updateField("annualMortgageInterestRate", e.target.value)
@@ -164,13 +157,13 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Loan Term (Years)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Loan Term (Y)
           </label>
           <input
             type="number"
             placeholder="30"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.loanTermYears}
             onChange={(e) => updateField("loanTermYears", e.target.value)}
             min="1"
@@ -182,16 +175,16 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
 
       {/* Monthly Rent Savings */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Similar Property Rent Monthly ($)
-          <span className="block text-xs text-gray-500 font-normal mt-1">
-            What you would pay to rent a similar property
+        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          Comparable Rent ($)
+          <span className="block text-xs text-gray-500 font-normal">
+            Similar property monthly rent
           </span>
         </label>
         <input
           type="number"
           placeholder="1800"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           value={formData.estimatedMonthlyRentSavings}
           onChange={(e) =>
             updateField("estimatedMonthlyRentSavings", e.target.value)
@@ -203,15 +196,15 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       </div>
 
       {/* Property Tax and HOA */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Monthly Property Tax ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Tax ($)
           </label>
           <input
             type="number"
             placeholder="150"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.monthlyPropertyTax}
             onChange={(e) => updateField("monthlyPropertyTax", e.target.value)}
             min="0"
@@ -220,13 +213,13 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Monthly HOA Fees ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            HOA ($)
           </label>
           <input
             type="number"
             placeholder="250"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.monthlyHoa}
             onChange={(e) => updateField("monthlyHoa", e.target.value)}
             min="0"
@@ -237,15 +230,15 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       </div>
 
       {/* Insurance and Maintenance */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Monthly Home Insurance ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Insurance ($)
           </label>
           <input
             type="number"
             placeholder="150"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.monthlyInsurance}
             onChange={(e) => updateField("monthlyInsurance", e.target.value)}
             min="0"
@@ -254,13 +247,13 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Monthly Maintenance ($)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Maintenance ($)
           </label>
           <input
             type="number"
             placeholder="75"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.monthlyMaintenance}
             onChange={(e) => updateField("monthlyMaintenance", e.target.value)}
             min="0"
@@ -271,15 +264,15 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       </div>
 
       {/* Appreciation and Holding Period */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Annual Appreciation (%)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Appreciation (%)
           </label>
           <input
             type="number"
             placeholder="3"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.annualAppreciation}
             onChange={(e) => updateField("annualAppreciation", e.target.value)}
             min="0"
@@ -288,13 +281,13 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Holding Period (Years)
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Years
           </label>
           <input
             type="number"
             placeholder="10"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.years}
             onChange={(e) => updateField("years", e.target.value)}
             min="1"
@@ -305,31 +298,12 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       </div>
 
       {/* Submit Button */}
-      {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-        <p className="font-semibold mb-1">How the comparison works:</p>
-        <ul className="list-disc list-inside space-y-1 text-xs">
-          <li>Option 1: Buy the property with your down payment</li>
-          <li>
-            Option 2: Rent a similar property and invest your down payment in
-            S&P 500
-          </li>
-          <li>
-            If owning costs more than rent, the difference is invested monthly
-            in S&P 500
-          </li>
-          <li>
-            We compare total equity (property value - mortgage) vs S&P 500
-            portfolio value
-          </li>
-        </ul>
-      </div> */}
-
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
       >
         <span>🏠</span>
-        Calculate Real Estate Returns
+        Calculate Returns
       </button>
     </form>
   );
