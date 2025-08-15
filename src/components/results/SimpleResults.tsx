@@ -173,7 +173,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
                 </span>
               </div>
 
-              {sp500.monthlyContribution !== undefined && (
+              {sp500.monthlyContribution !== undefined && sp500.monthlyContribution !== 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-xs sm:text-sm text-gray-700">
                     {type === "realestate"
