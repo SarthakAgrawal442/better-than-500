@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import StockForm from "../components/forms/StockForm";
-import type { StockFormData } from "../types/types";
 
 // Mock window.alert to prevent jsdom errors
 global.alert = vi.fn();
