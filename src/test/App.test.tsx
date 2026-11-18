@@ -127,13 +127,13 @@ describe("App Integration", () => {
 
     // Check for results
     await waitFor(() => {
-      expect(screen.getByText(/Results after 7 years/)).toBeInTheDocument();
-      expect(screen.getByText("My Home")).toBeInTheDocument();
-      expect(screen.getByText("S&P 500 (Renting)")).toBeInTheDocument();
+      expect(screen.getByText(/Estimate after 7 years/)).toBeInTheDocument();
+      expect(screen.getByText("Buy a home")).toBeInTheDocument();
+      expect(screen.getByText("Rent and invest")).toBeInTheDocument();
     });
 
     // Check for real estate specific labels
-    expect(screen.getByText("Ending wealth:")).toBeInTheDocument();
+    expect(screen.getByText("How the totals add up")).toBeInTheDocument();
   });
 
   it("should show detailed breakdown when requested", async () => {

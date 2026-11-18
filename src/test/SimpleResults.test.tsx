@@ -228,10 +228,10 @@ describe("SimpleResults", () => {
       />
     );
 
-    expect(screen.getByText("My Home")).toBeInTheDocument();
-    expect(screen.getByText("S&P 500 (Renting)")).toBeInTheDocument();
-    expect(screen.getByText("Ending wealth:")).toBeInTheDocument();
-    expect(screen.getByText("Extra Cost:")).toBeInTheDocument();
+    expect(screen.getByText("Buy a home")).toBeVisible();
+    expect(screen.getByText("Rent and invest")).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Buying leaves you with \$20,000 more/ })).toBeVisible();
+    expect(screen.getByText("Estimated sale price")).not.toBeVisible();
   });
 
   it("reports equal rounded values without declaring a winner", () => {

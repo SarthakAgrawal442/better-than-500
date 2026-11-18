@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Trophy, TrendingUp } from "lucide-react";
 import { formatCurrency, formatPercentage } from "../../utils/calculations";
 import DetailedBreakdown from "./DetailedBreakdown";
+import HousingResult from "./HousingResult";
 import Card from "../ui/Card";
 import type { ComparisonResult, InvestmentType } from "../../types/types";
 
@@ -12,7 +13,12 @@ interface SimpleResultsProps {
   onClear: () => void;
 }
 
-function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
+function SimpleResults(props: SimpleResultsProps) {
+  if (props.data && props.type === "realestate") return <HousingResult data={props.data} />;
+  return <StockResults {...props} />;
+}
+
+function StockResults({ data, type, onClear }: SimpleResultsProps) {
   const [showDetails, setShowDetails] = useState(false);
 
   if (!data) return null;

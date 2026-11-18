@@ -19,3 +19,8 @@
 .assumptions summary { font-weight: 600; font-size: .92rem; cursor: pointer; }
 .assumptions fieldset, .assumptions p { margin-top: 16px; }
 :focus-visible { outline: 3px solid #0071e3; outline-offset: 3px; }
+.housing-result h2 { font-size: clamp(1.6rem, 4vw, 2.1rem); line-height: 1.18; font-weight: 600; text-wrap: balance; }
+.housing-result h2 strong { color: #0066cc; font-weight: inherit; }
+.housing-result dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 9px 0; }
+.housing-result dd { font-weight: 600; font-variant-numeric: tabular-nums; }
+.housing-result details dl { font-size: .9rem; }
