@@ -37,6 +37,31 @@ Open the local URL printed by Vite. Use `npm run test:run` to run the Vitest sui
 
 The financial formulas live in [calculations.ts](src/utils/calculations.ts), with worked cases and boundary checks in [calculations.test.ts](src/test/calculations.test.ts).
 
+## Project structure
+
+```text
+public/                         Static assets served by Vite
+src/
+├── main.tsx                    React entry point
+├── App.tsx                     Calculator selection and form submission
+├── index.css                   Global styles and calculator layouts
+├── components/
+│   ├── forms/                  Stock and housing input forms
+│   ├── results/                Comparison summaries and breakdowns
+│   └── ui/                     Shared interface components
+├── hooks/
+│   └── useInvestmentCalculator.ts   Input validation and calculation state
+├── utils/
+│   ├── calculations.ts         Investment growth, mortgages, and comparisons
+│   └── constants.ts            Benchmark rate, presets, and housing defaults
+├── types/types.ts              Shared form and result types
+└── test/                       Formula, component, hook, and integration tests
+vite.config.ts                  Development server and build configuration
+vitest.config.ts                Test runner configuration
+```
+
+To trace a comparison, start in `App.tsx`. It passes the submitted form to `useInvestmentCalculator`, which validates the inputs and calls the formulas in `utils/calculations.ts`. The components in `components/results/` display the returned balances.
+
 ## License
 
 MIT.
