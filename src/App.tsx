@@ -18,15 +18,13 @@ function App() {
   const [results, setResults] = useState<ComparisonResult | null>(null);
 
   // Custom hook handles all calculations
-  const { calculateInvestment, error } = useInvestmentCalculator();
+  const { calculateInvestment, error, clearError } = useInvestmentCalculator();
 
   // Simple handlers - just pass data to calculator
   const handleStockSubmit = async (formData: StockFormData) => {
     const calculatedResults = await calculateInvestment(formData, "stocks");
     if (calculatedResults) {
       setResults(calculatedResults);
-    } else if (error) {
-      alert(error.message);
     }
   };
 
@@ -34,41 +32,35 @@ function App() {
     const calculatedResults = await calculateInvestment(formData, "realestate");
     if (calculatedResults) {
       setResults(calculatedResults);
-    } else if (error) {
-      alert(error.message);
     }
   };
 
   const clearResults = () => setResults(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-2 sm:p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Simple Header */}
-        <header className="text-center mb-4 sm:mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
-            <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-            <h1 className="text-2xl sm:text-4xl font-bold text-blue-600">
-              Better Than 500
-            </h1>
-          </div>
+    <main className="calculator-shell">
+      <div className="calculator-column">
+        <header className="brand">
+          <BarChart3 aria-hidden="true" size={28} />
+          <h1>Better Than 500</h1>
         </header>
 
         {/* Tab Switcher Component */}
         <TabSwitcher
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={tab => { clearError(); setActiveTab(tab); }}
           onClear={clearResults}
         />
 
         {/* Forms - only show one at a time */}
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-4 sm:mb-8">
+        <div className="form-panel" onChange={() => { clearResults(); clearError(); }}>
           {activeTab === "stocks" && <StockForm onSubmit={handleStockSubmit} />}
           {activeTab === "realestate" && (
             <RealEstateForm onSubmit={handleRealEstateSubmit} />
           )}
         </div>
 
+        {error && <p role="alert">{error.message}</p>}
         {/* Results - only show if we have data */}
         {results && (
           <SimpleResults
@@ -78,7 +70,7 @@ function App() {
           />
         )}
       </div>
-    </div>
+    </main>
   );
 }
 

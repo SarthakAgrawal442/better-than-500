@@ -91,7 +91,7 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="text-center mb-3 sm:mb-6">
+      <div>
         <h2 className="text-sm sm:text-lg font-bold text-gray-800">
           Home vs Rent + S&P 500
         </h2>
@@ -99,10 +99,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
 
       {/* Investment Name */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+        <label htmlFor="RealEstateForm-investment-name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
           Investment Name
         </label>
-        <input
+        <input id="RealEstateForm-investment-name"
           type="text"
           placeholder="My Property"
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -114,10 +114,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       {/* Property Value and Down Payment */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-property" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Property ($)
           </label>
-          <input
+          <input id="RealEstateForm-property"
             type="number"
             placeholder="500000"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -129,10 +129,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-down-pay" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Down Pay ($)
           </label>
-          <input
+          <input id="RealEstateForm-down-pay"
             type="number"
             placeholder="100000"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -148,10 +148,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       {/* Mortgage Rate and Loan Term */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-mortgage" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Mortgage (%)
           </label>
-          <input
+          <input id="RealEstateForm-mortgage"
             type="number"
             placeholder="4"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -165,10 +165,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-loan-term-y" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Loan Term (Y)
           </label>
-          <input
+          <input id="RealEstateForm-loan-term-y"
             type="number"
             placeholder="30"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -183,13 +183,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
 
       {/* Monthly Rent Savings */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-          Comparable Rent ($)
-          <span className="block text-xs text-gray-500 font-normal">
-            Similar property monthly rent
-          </span>
+        <label htmlFor="RealEstateForm-rent" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          Comparable monthly rent ($)
         </label>
-        <input
+        <input id="RealEstateForm-rent"
           type="number"
           placeholder="1800"
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -206,10 +203,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       {/* Property Tax and HOA */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Tax ($)
+          <label htmlFor="RealEstateForm-tax" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Monthly tax ($)
           </label>
-          <input
+          <input id="RealEstateForm-tax"
             type="number"
             placeholder="150"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -221,10 +218,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            HOA ($)
+          <label htmlFor="RealEstateForm-hoa" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Monthly HOA ($)
           </label>
-          <input
+          <input id="RealEstateForm-hoa"
             type="number"
             placeholder="250"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -240,10 +237,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       {/* Insurance and Maintenance */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Insurance ($)
+          <label htmlFor="RealEstateForm-insurance" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Monthly insurance ($)
           </label>
-          <input
+          <input id="RealEstateForm-insurance"
             type="number"
             placeholder="150"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -255,10 +252,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Maintenance ($)
+          <label htmlFor="RealEstateForm-maintenance" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Monthly maintenance ($)
           </label>
-          <input
+          <input id="RealEstateForm-maintenance"
             type="number"
             placeholder="75"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -274,10 +271,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       {/* Appreciation and Holding Period */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-appreciation" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Appreciation (%)
           </label>
-          <input
+          <input id="RealEstateForm-appreciation"
             type="number"
             placeholder="3"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -289,10 +286,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="RealEstateForm-years" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Years
           </label>
-          <input
+          <input id="RealEstateForm-years"
             type="number"
             placeholder="10"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -305,8 +302,9 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
         </div>
       </div>
 
+      <details className="assumptions"><summary>Comparison assumptions</summary>
       <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="font-semibold">Comparison assumptions</legend>
+        <legend className="sr-only">Comparison assumptions</legend>
         {([
           ["purchaseCostPercent", "Purchase costs (% of purchase price)"],
           ["saleCostPercent", "Selling costs (% of final home value)"],
@@ -321,12 +319,12 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
         ))}
       </fieldset>
       <p className="text-sm text-gray-600">Both households invest monthly savings at an assumed 7% effective annual total return with dividends reinvested. Use nominal dollars. Results are before income and capital gains taxes. Growth in rent and recurring expenses starts in year two.</p>
+      </details>
 
       <button
         type="submit"
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
       >
-        <span>🏠</span>
         Calculate Returns
       </button>
     </form>

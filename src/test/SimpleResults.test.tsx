@@ -234,35 +234,12 @@ describe("SimpleResults", () => {
     expect(screen.getByText("Extra Cost:")).toBeInTheDocument();
   });
 
-  it("should display performance difference with correct styling", () => {
-    // Test user wins scenario
-    const { unmount } = render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    const differenceSection = screen.getByText("Difference:").closest("div");
-    expect(differenceSection).toContainHTML("text-green-600"); // User wins
-    expect(screen.getByText("$20,000")).toBeInTheDocument();
-
-    unmount(); // Clean up before next render
-
-    // Test S&P 500 wins scenario
-    render(
-      <SimpleResults
-        data={mockDataSP500Wins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    const sp500DifferenceSection = screen
-      .getByText("Difference:")
-      .closest("div");
-    expect(sp500DifferenceSection).toContainHTML("text-red-600"); // SP500 wins
+  it("reports equal rounded values without declaring a winner", () => {
+    const equal = { ...mockDataUserWins, sp500: { ...mockDataUserWins.sp500,
+      futureValue: mockDataUserWins.user.futureValue }, difference: 0 };
+    render(<SimpleResults data={equal} type="stocks" onClear={mockOnClear} />);
+    expect(screen.getByText(/finish even/)).toBeInTheDocument();
+    expect(screen.queryByText(/Wins!/)).not.toBeInTheDocument();
   });
 
   it("should handle missing monthly contribution gracefully", () => {

@@ -65,7 +65,7 @@ function StockForm({ onSubmit }: StockFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-6">
       {/* Header */}
-      <div className="text-center mb-3 sm:mb-6">
+      <div>
         <h2 className="text-sm sm:text-lg font-bold text-gray-800">
           Compare Stocks/ETFs vs S&P 500
         </h2>
@@ -73,10 +73,10 @@ function StockForm({ onSubmit }: StockFormProps) {
 
       {/* Quick Presets */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-          Quick Presets 🚀
+        <label htmlFor="StockForm-quick-presets" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          Investment preset
         </label>
-        <select
+        <select id="StockForm-quick-presets"
           onChange={(e) => applyPreset(e.target.value)}
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
           defaultValue=""
@@ -92,10 +92,10 @@ function StockForm({ onSubmit }: StockFormProps) {
 
       {/* Investment Name */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+        <label htmlFor="StockForm-investment-name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
           Investment Name
         </label>
-        <input
+        <input id="StockForm-investment-name"
           type="text"
           placeholder="e.g., VFIAX, QQQ"
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -107,10 +107,10 @@ function StockForm({ onSubmit }: StockFormProps) {
       {/* Initial Amount and Monthly Contribution */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="StockForm-initial" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Initial ($)
           </label>
-          <input
+          <input id="StockForm-initial"
             type="number"
             placeholder="1000"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -122,10 +122,10 @@ function StockForm({ onSubmit }: StockFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="StockForm-monthly" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Monthly ($)
           </label>
-          <input
+          <input id="StockForm-monthly"
             type="number"
             placeholder="100"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -140,10 +140,10 @@ function StockForm({ onSubmit }: StockFormProps) {
       {/* Return Rate and Fees */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="StockForm-return" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Return (%)
           </label>
-          <input
+          <input id="StockForm-return"
             type="number"
             placeholder="7"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -155,10 +155,10 @@ function StockForm({ onSubmit }: StockFormProps) {
           />
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          <label htmlFor="StockForm-fees" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Fees (%)
           </label>
-          <input
+          <input id="StockForm-fees"
             type="number"
             placeholder="0.1"
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -172,10 +172,10 @@ function StockForm({ onSubmit }: StockFormProps) {
 
       {/* Time Period */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+        <label htmlFor="StockForm-years" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
           Years
         </label>
-        <input
+        <input id="StockForm-years"
           type="number"
           placeholder="10"
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -192,7 +192,6 @@ function StockForm({ onSubmit }: StockFormProps) {
         type="submit"
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
       >
-        <span>📊</span>
         Compare with S&P 500
       </button>
     </form>

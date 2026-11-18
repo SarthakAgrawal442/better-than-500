@@ -1,6 +1,6 @@
 // components/results/SimpleResults.tsx - Clean results display
 import { useState } from "react";
-import { Trophy, TrendingUp, ArrowUp, ArrowDown } from "lucide-react";
+import { Trophy, TrendingUp } from "lucide-react";
 import { formatCurrency, formatPercentage } from "../../utils/calculations";
 import DetailedBreakdown from "./DetailedBreakdown";
 import Card from "../ui/Card";
@@ -18,6 +18,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
   if (!data) return null;
 
   const { user, sp500, winner, difference } = data;
+  const tied = Math.round(user.futureValue) === Math.round(sp500.futureValue);
   const isUserWinner = winner === "user";
 
   return (
@@ -32,7 +33,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
         </div>
 
         {/* Winner Announcement */}
-        <div
+        {tied ? <p className="rounded-xl bg-gray-50 p-4 text-center font-semibold">Both options finish even to the nearest dollar.</p> : <div
           className={`text-center p-3 sm:p-6 rounded-xl mb-3 sm:mb-6 ${
             isUserWinner
               ? "bg-green-50 border-2 border-green-200"
@@ -59,18 +60,20 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
           </p>
         </div>
 
+        }
+
         {/* Side-by-side Comparison */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
           {/* User Investment */}
           <div
             className={`p-3 sm:p-6 rounded-xl border-2 ${
               isUserWinner
-                ? "bg-green-50 border-green-300"
+                && !tied ? "bg-green-50 border-green-300"
                 : "bg-gray-50 border-gray-300"
             }`}
           >
             <div className="flex items-center gap-2 mb-2 sm:mb-4">
-              {isUserWinner && (
+              {isUserWinner && !tied && (
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
               )}
               <h4 className="text-sm sm:text-lg font-bold text-gray-800">
@@ -128,12 +131,12 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
           <div
             className={`p-3 sm:p-6 rounded-xl border-2 ${
               !isUserWinner
-                ? "bg-green-50 border-green-300"
+                && !tied ? "bg-green-50 border-green-300"
                 : "bg-gray-50 border-gray-300"
             }`}
           >
             <div className="flex items-center gap-2 mb-2 sm:mb-4">
-              {!isUserWinner && (
+              {!isUserWinner && !tied && (
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
               )}
               <h4 className="text-sm sm:text-lg font-bold text-gray-800">
@@ -197,32 +200,10 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
           </div>
         </div>
 
-        {/* Performance Difference */}
-        <div className="mt-3 sm:mt-6 p-3 sm:p-4 bg-gray-100 rounded-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm text-gray-700 font-medium">
-              Difference:
-            </span>
-            <div className="flex items-center gap-2">
-              {isUserWinner ? (
-                <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-              ) : (
-                <ArrowDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-              )}
-              <span
-                className={`text-sm sm:text-lg font-bold ${
-                  isUserWinner ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {formatCurrency(difference)}
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 sm:mt-6">
           <button
+            aria-expanded={showDetails}
             onClick={() => setShowDetails(!showDetails)}
             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors text-sm sm:text-base"
           >
