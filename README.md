@@ -1,172 +1,42 @@
-# Better Than 500 📈
+# Better Than 500
 
-A clean, modern investment comparison tool that helps you evaluate whether your investments can beat the S&P 500. Compare stocks, ETFs, and real estate investments with detailed analysis and beautiful visualizations.
+Compare how much money you could have at the end of two different choices. The stock calculator compares a fund with the S&P 500. The housing calculator compares buying a home with renting a similar place and investing the savings.
 
-## ✨ Features
+[Open the calculator](https://better-than-500.vercel.app/)
 
-### 🎯 **Investment Types**
+## Compare an investment
 
-- **Stocks & ETFs** - Compare any stock or ETF against S&P 500 performance
-- **Real Estate** - Comprehensive property investment analysis vs renting + S&P 500 investing
+Choose **Stocks/ETF**, pick a fund, and enter your starting amount, monthly deposit, and time horizon. Open **Customize investment** to change the assumed annual return and fee. Both options receive the same deposits at the end of each month, and the starting amount is invested immediately.
 
-### 📊 **Smart Analysis**
+**Try the default example.** Start with $1,000 and add $100 a month for 10 years. At a 7% annual return and a 0.1% annual fee, the fund grows to **$18,966**. The fee-free benchmark grows to **$19,072**. The $106 gap shows the effect of the fee under otherwise identical assumptions.
 
-- **Growth Comparison Charts** - Visual line graphs showing investment growth over time
-- **Winner Highlighting** - Clear indicators showing which investment performs better
-- **Real-time Calculations** - Instant results as you input data
-- **Cash Flow Analysis** - Live preview of real estate monthly expenses vs rent
+## Compare buying with renting
 
-### 🎨 **Clean Design**
+Choose **Real Estate** and enter the price, down payment, mortgage terms, and rent for a comparable home. Include the monthly property tax, insurance, maintenance, and HOA costs. Under **Comparison assumptions**, you can add purchase and selling costs or set annual growth rates for rent and recurring ownership costs. All four adjustments default to zero.
 
-- **Compact UI** - Inspired by modern fintech applications
-- **Responsive Layout** - Works perfectly on desktop and mobile
-- **Quick Presets** - Smart defaults for faster input
-- **Professional Results** - Clean cards and detailed breakdowns for easy interpretation
+Both households start with the same cash. The buyer spends it on the down payment and purchase costs. The renter invests it. Each month, whichever household spends less on housing invests the difference. Mortgage payments stop at payoff. At the end of the selected period, the buyer’s total includes sale proceeds after costs and mortgage repayment, plus any investments. The renter’s total is the investment balance.
 
-## 🚀 Getting Started
+**Try a change that can reverse the result.** With the default $500,000 home and $1,800 monthly rent, buying finishes **$34,442 ahead** after 10 years. Change only the selling cost to 6%, then calculate again. Selling the appreciated home costs about $40,317, moving renting ahead by about **$5,875**.
 
-### Prerequisites
+## Read the estimate
 
-- Node.js 18+
-- npm or yarn
+The headline gives the difference between the two projected ending balances, rounded to whole dollars. Open **How the totals add up** to see what went into them. All amounts are in nominal US dollars before income and capital gains taxes. The S&P 500 benchmark assumes a constant 7% effective annual total return with dividends reinvested. The calculator converts annual investment returns to monthly growth and deducts the fund’s annual fee from its assumed annual return before compounding.
 
-### Installation
+## Run locally
 
-1. **Clone the repository**
+The app uses React, TypeScript, Vite, and Tailwind CSS. With Node.js and npm installed, run the following commands.
 
-   ```bash
-   git clone https://github.com/yourusername/better-than-500.git
-   cd better-than-500
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Start the development server**
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173` to see the application.
-
-## 🛠️ Built With
-
-- **React 18** - Modern React with hooks and TypeScript
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first CSS framework
-- **Recharts** - Beautiful, responsive charts
-- **Lucide React** - Clean, consistent icons
-- **Vite** - Fast build tool and dev server
-
-## 📖 How to Use
-
-### Stock/ETF Analysis
-
-1. **Select "Stocks/ETF"** from the toggle
-2. **Choose a preset** or enter custom details:
-   - Investment name (e.g., "VFIAX", "QQQ")
-   - Initial amount and monthly contributions
-   - Expected annual return and fees
-   - Investment period
-3. **Click "Compare with S&P 500"** to see results
-4. **View the analysis** - Side-by-side comparison showing your investment vs S&P 500 performance
-
-### Real Estate Analysis
-
-1. **Select "Real Estate"** from the toggle
-2. **Enter property details**:
-   - Property value and down payment
-   - Mortgage terms (interest rate, loan term)
-   - Monthly expenses (taxes, insurance, maintenance, HOA)
-   - Comparable monthly rent and appreciation rate
-3. **Click "Calculate Real Estate Returns"** to see comprehensive analysis:
-   - Property equity vs S&P 500 investing (rent + invest difference)
-   - Detailed financial breakdown
-   - Cash flow analysis
-
-## 🏗️ Project Structure
-
-```
-src/
-├── components/
-│   ├── forms/
-│   │   ├── StockForm.tsx           # Stock/ETF input form
-│   │   └── RealEstateForm.tsx      # Real estate input form
-│   ├── results/
-│   │   ├── InvestmentResults.tsx   # Stock/ETF results display
-│   │   └── RealEstateResults.tsx   # Real estate results display
-│   └── ui/
-│       ├── Button.tsx              # Reusable button component
-│       ├── Card.tsx                # Card wrapper component
-│       └── ...                     # Other UI components
-├── hooks/
-│   └── useInvestmentCalculator.ts  # Investment calculation logic
-├── utils/
-│   └── calculations.ts             # Core calculation functions
-├── types/
-│   └── types.ts                    # TypeScript interfaces
-└── App.tsx                         # Main application component
+```sh
+git clone https://github.com/SarthakAgrawal442/better-than-500.git
+cd better-than-500
+npm ci
+npm run dev
 ```
 
-## 🎯 Key Calculations
+Open the local URL printed by Vite. Use `npm run test:run` to run the Vitest suite once and `npm run build` to type-check and produce a production build in `dist/`.
 
-### Stock/ETF Returns
+The financial formulas live in [calculations.ts](src/utils/calculations.ts), with worked cases and boundary checks in [calculations.test.ts](src/test/calculations.test.ts).
 
-- **Future Value** = Principal × (1 + rate)^years + Monthly contributions with compound growth
-- **Effective Return** = Annual return - Annual fees
-- **Comparison** = Your investment vs S&P 500 (assumed 7% effective annual total return, dividends reinvested)
+## License
 
-### Real Estate vs Rent + Invest
-
-- Both households start with the down payment plus purchase costs. The renter invests this cash immediately.
-- Each month the household with lower housing costs invests the difference at month end. Mortgage payments end at payoff. Rent and recurring ownership costs can grow separately each year.
-- Ending owner wealth includes net sale proceeds and accumulated stock investments. The breakdown also shows home equity before selling costs.
-- Housing IRR uses purchase cash, monthly rent avoided less ownership expenses, and final sale proceeds. Results use nominal dollars before income and capital gains taxes.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## ⚠️ Disclaimer
-
-This tool is for educational and planning purposes only. It does not constitute financial advice. Past performance does not guarantee future results. Please consult with a qualified financial advisor before making investment decisions.
-
-## 🔮 Future Features
-
-- [ ] **More Investment Types** - Bonds, commodities, crypto comparisons
-- [ ] **Advanced Analysis** - Risk metrics, Monte Carlo simulations
-- [ ] **Export Features** - PDF reports, CSV data export
-- [ ] **Saved Scenarios** - Save and compare multiple investment strategies
-- [ ] **Tax Considerations** - Capital gains, depreciation for real estate
-- [ ] **Inflation Adjustment** - Real vs nominal returns
-- [ ] **Market Data Integration** - Live stock prices and real estate data
-
-## 🙏 Acknowledgments
-
-- S&P 500 historical return data
-- Modern fintech UI/UX inspiration
-- Recharts for beautiful visualizations
-- Tailwind CSS for rapid styling
-
----
-
-**Made with ❤️ for better investment decisions**
+MIT.
