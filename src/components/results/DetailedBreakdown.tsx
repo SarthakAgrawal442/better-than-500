@@ -12,6 +12,30 @@ interface DetailedBreakdownProps {
 function DetailedBreakdown({ data, type }: DetailedBreakdownProps) {
   const { user, sp500 } = data;
 
+  if (type === "realestate" && user.details?.saleProceeds !== undefined) {
+    const d = user.details;
+    const rows = [
+      ["Starting cash per household", user.initialInvestment],
+      ["Final home value", d.futurePropertyValue],
+      ["Remaining mortgage", d.remainingMortgage],
+      ["Home equity before sale", d.totalEquity],
+      ["Selling costs", d.saleCosts],
+      ["Net sale proceeds", d.saleProceeds],
+      ["Owner's monthly deposits combined", d.ownerDeposits],
+      ["Owner's ending stock portfolio", d.ownerPortfolio],
+      ["Owner's ending wealth", user.futureValue],
+      ["Renter's monthly deposits combined", d.renterDeposits],
+      ["Renter's ending portfolio", sp500.futureValue],
+    ] as const;
+    return <Card>
+      <h3 className="font-semibold">Detailed Financial Breakdown</h3>
+      <dl>{rows.map(([label, value]) => <div key={label} className="flex justify-between gap-4 py-1">
+        <dt>{label}</dt><dd>{formatCurrency(value ?? 0)}</dd>
+      </div>)}</dl>
+      <p className="mt-3 text-sm">Housing IRR includes purchase cash, rent avoided, monthly ownership payments and net sale proceeds. It is unavailable when the cash flows do not establish a unique conventional return.</p>
+    </Card>;
+  }
+
   // Calculate total contributions for both investments
   const userTotalContributions =
     user.initialInvestment +

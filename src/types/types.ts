@@ -32,6 +32,12 @@ export interface RealEstateDetails {
   equityFromPaydown?: number;
   totalEquity?: number;
   monthlyRent?: number;
+  saleCosts?: number;
+  saleProceeds?: number;
+  ownerPortfolio?: number;
+  renterPortfolio?: number;
+  ownerDeposits?: number;
+  renterDeposits?: number;
 }
 
 export interface ComparisonResult {
@@ -66,6 +72,10 @@ export interface RealEstateFormData {
   monthlyMaintenance: number;
   annualAppreciation: number;
   monthlyRentSavings: number;
+  purchaseCostPercent?: number;
+  saleCostPercent?: number;
+  rentGrowth?: number;
+  expenseGrowth?: number;
   years: number;
 }
 

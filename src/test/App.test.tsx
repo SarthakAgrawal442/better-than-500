@@ -133,7 +133,7 @@ describe("App Integration", () => {
     });
 
     // Check for real estate specific labels
-    expect(screen.getByText("Total Equity:")).toBeInTheDocument();
+    expect(screen.getByText("Ending wealth:")).toBeInTheDocument();
   });
 
   it("should show detailed breakdown when requested", async () => {

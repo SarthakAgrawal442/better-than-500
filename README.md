@@ -123,14 +123,14 @@ src/
 
 - **Future Value** = Principal × (1 + rate)^years + Monthly contributions with compound growth
 - **Effective Return** = Annual return - Annual fees
-- **Comparison** = Your investment vs S&P 500 (7% historical average)
+- **Comparison** = Your investment vs S&P 500 (assumed 7% effective annual total return, dividends reinvested)
 
 ### Real Estate vs Rent + Invest
 
-- **Real Estate Path** = Property equity (appreciation + mortgage paydown)
-- **Rent + Invest Path** = S&P 500 returns on (down payment + monthly cost difference)
-- **Monthly Difference** = Total ownership costs - Comparable rent
-- **Winner** = Higher final value after holding period
+- Both households start with the down payment plus purchase costs. The renter invests this cash immediately.
+- Each month the household with lower housing costs invests the difference at month end. Mortgage payments end at payoff. Rent and recurring ownership costs can grow separately each year.
+- Ending owner wealth includes net sale proceeds and accumulated stock investments. The breakdown also shows home equity before selling costs.
+- Housing IRR uses purchase cash, monthly rent avoided less ownership expenses, and final sale proceeds. Results use nominal dollars before income and capital gains taxes.
 
 ## 🤝 Contributing
 

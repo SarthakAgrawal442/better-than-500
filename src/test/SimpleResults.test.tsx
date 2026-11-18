@@ -230,7 +230,7 @@ describe("SimpleResults", () => {
 
     expect(screen.getByText("My Home")).toBeInTheDocument();
     expect(screen.getByText("S&P 500 (Renting)")).toBeInTheDocument();
-    expect(screen.getByText("Total Equity:")).toBeInTheDocument();
+    expect(screen.getByText("Ending wealth:")).toBeInTheDocument();
     expect(screen.getByText("Extra Cost:")).toBeInTheDocument();
   });
 

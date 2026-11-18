@@ -1,8 +1,8 @@
 // utils/calculations.ts - Fixed real estate vs S&P 500 comparison
+import { SP500_RATE } from "./constants";
 import type {
   StockFormData,
   RealEstateFormData,
-  RealEstateDetails,
   ComparisonResult,
   InvestmentType,
 } from "../types/types";
@@ -16,7 +16,7 @@ export function calculateStockGrowth(
   annualRate: number,
   years: number
 ): number {
-  const monthlyRate = annualRate / 100 / 12;
+  const monthlyRate = Math.expm1(Math.log1p(annualRate / 100) / 12);
   const totalMonths = years * 12;
 
   // Future value of initial lump sum
@@ -41,7 +41,6 @@ export function calculateSP500Comparison(
   monthlyAmount: number,
   years: number
 ): number {
-  const SP500_RATE = 7; // Historical average
   return calculateStockGrowth(initialAmount, monthlyAmount, SP500_RATE, years);
 }
 
@@ -53,10 +52,11 @@ export function calculateMortgagePayment(
   annualRate: number,
   years: number
 ): number {
-  if (principal <= 0 || annualRate <= 0 || years <= 0) return 0;
+  if (principal <= 0 || annualRate < 0 || years <= 0) return 0;
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
+  if (annualRate === 0) return principal / numPayments;
 
   return (
     (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
@@ -69,7 +69,7 @@ export function calculateMortgagePayment(
  */
 export function calculateRealEstateReturns(
   propertyData: RealEstateFormData
-): RealEstateDetails {
+) {
   const {
     propertyValue,
     downPayment,
@@ -99,59 +99,71 @@ export function calculateRealEstateReturns(
     monthlyInsurance +
     monthlyMaintenance;
 
-  const annualExpenses = totalMonthlyExpenses * 12;
-  const annualRentSavings = monthlyRentSavings * 12;
-  const netAnnualCashFlow = annualRentSavings - annualExpenses;
-
-  // Property appreciation
-  const futurePropertyValue =
-    propertyValue * Math.pow(1 + annualAppreciation / 100, years);
-  const capitalGain = futurePropertyValue - propertyValue;
-
-  // Calculate remaining mortgage balance after 'years'
-  const monthsElapsed = Math.min(years * 12, loanTermYears * 12);
+  const recurring = monthlyTax + monthlyHOA + monthlyInsurance + monthlyMaintenance;
+  const startingCash = downPayment + propertyValue * (propertyData.purchaseCostPercent ?? 0) / 100;
+  const marketFactor = (1 + SP500_RATE / 100) ** (1 / 12);
+  let ownerPortfolio = 0;
+  let renterPortfolio = startingCash;
+  let ownerDeposits = 0;
+  let renterDeposits = 0;
   let remainingBalance = loanAmount;
+  let totalCashFlow = 0;
+  let annualExpenses = 0;
+  const flows = [-startingCash];
 
-  if (monthsElapsed < loanTermYears * 12) {
-    const r = annualRate / 100 / 12;
-    const n = loanTermYears * 12;
-    const m = monthsElapsed;
-    remainingBalance =
-      (loanAmount * (Math.pow(1 + r, n) - Math.pow(1 + r, m))) /
-      (Math.pow(1 + r, n) - 1);
-  } else {
-    remainingBalance = 0;
+  for (let month = 0; month < years * 12; month++) {
+    const year = Math.floor(month / 12);
+    const rent = monthlyRentSavings * (1 + (propertyData.rentGrowth ?? 0) / 100) ** year;
+    const interest = remainingBalance * annualRate / 1200;
+    const payment = month < loanTermYears * 12 ? monthlyMortgage : 0;
+    remainingBalance = month + 1 >= loanTermYears * 12
+      ? 0 : Math.max(0, remainingBalance + interest - payment);
+    const expenses = payment + recurring * (1 + (propertyData.expenseGrowth ?? 0) / 100) ** year;
+    const savings = rent - expenses;
+    const ownerDeposit = Math.max(0, savings);
+    const renterDeposit = Math.max(0, -savings);
+    ownerPortfolio = ownerPortfolio * marketFactor + ownerDeposit;
+    renterPortfolio = renterPortfolio * marketFactor + renterDeposit;
+    ownerDeposits += ownerDeposit;
+    renterDeposits += renterDeposit;
+    flows.push(savings);
+    totalCashFlow += savings;
+    if (month < 12) annualExpenses += expenses;
   }
 
-  // Equity from mortgage paydown
-  const equityFromPaydown = loanAmount - remainingBalance;
-
-  // Total equity = down payment + appreciation + mortgage paydown
-  const totalEquity = downPayment + capitalGain + equityFromPaydown;
-
-  // Net worth from real estate = total equity (since we own the property)
-  const futureValue = totalEquity;
-
-  // Annualized return based on initial investment (down payment)
-  const annualizedReturn =
-    downPayment > 0
-      ? (Math.pow(futureValue / downPayment, 1 / years) - 1) * 100
-      : 0;
-
+  const futurePropertyValue = propertyValue * (1 + annualAppreciation / 100) ** years;
+  const totalEquity = futurePropertyValue - remainingBalance;
+  const saleCosts = futurePropertyValue * (propertyData.saleCostPercent ?? 0) / 100;
+  const saleProceeds = totalEquity - saleCosts;
+  flows[flows.length - 1] += saleProceeds;
   return {
-    propertyValue,
-    futurePropertyValue,
-    capitalGain,
-    totalCashFlow: netAnnualCashFlow * years,
-    annualExpenses,
-    monthlyExpenses: totalMonthlyExpenses,
-    monthlyCashFlow: (annualRentSavings - annualExpenses) / 12,
-    annualizedReturn,
+    propertyValue, futurePropertyValue, totalEquity, saleCosts, saleProceeds,
+    ownerPortfolio, renterPortfolio, ownerDeposits, renterDeposits,
+    capitalGain: futurePropertyValue - propertyValue,
+    equityFromPaydown: loanAmount - remainingBalance,
     remainingMortgage: remainingBalance,
-    equityFromPaydown,
-    totalEquity: futureValue,
-    monthlyRent: monthlyRentSavings, // Add this for display purposes
+    monthlyExpenses: totalMonthlyExpenses, annualExpenses, totalCashFlow,
+    monthlyRent: monthlyRentSavings,
+    monthlyCashFlow: monthlyRentSavings - totalMonthlyExpenses,
+    annualizedReturn: annualHousingIRR(flows),
   };
+}
+
+/** Only report IRR when a conventional cash-flow sequence guarantees a unique root. */
+function annualHousingIRR(flows: number[]): number {
+  const firstReceipt = flows.findIndex(value => value > 0);
+  if (firstReceipt < 0 || flows.slice(firstReceipt).some(value => value < 0)) return NaN;
+  // Evaluate the terminal value by rolling each monthly flow forward.
+  const terminal = (factor: number) => flows.reduce((balance, flow) => balance * factor + flow, 0);
+  let low = 0;
+  let high = 2;
+  while (terminal(high) > 0) high *= 2;
+  for (let step = 0; step < 80; step++) {
+    const mid = (low + high) / 2;
+    if (terminal(mid) > 0) low = mid;
+    else high = mid;
+  }
+  return (((low + high) / 2) ** 12 - 1) * 100;
 }
 
 /**
@@ -186,10 +198,8 @@ export function calculateInvestmentComparison(
         monthlyContribution: stockData.monthlyAmount,
         years: stockData.years,
         rate: netRate,
-        netReturn:
-          ((userValue / stockData.initialAmount) ** (1 / stockData.years) - 1) *
-          100,
-        totalReturn: userValue - stockData.initialAmount,
+        netReturn: netRate,
+        totalReturn: userValue - stockData.initialAmount - stockData.monthlyAmount * 12 * stockData.years,
       },
       sp500: {
         name: "S&P 500",
@@ -197,12 +207,9 @@ export function calculateInvestmentComparison(
         initialInvestment: stockData.initialAmount,
         monthlyContribution: stockData.monthlyAmount,
         years: stockData.years,
-        rate: 7,
-        netReturn:
-          ((sp500Value / stockData.initialAmount) ** (1 / stockData.years) -
-            1) *
-          100,
-        totalReturn: sp500Value - stockData.initialAmount,
+        rate: SP500_RATE,
+        netReturn: SP500_RATE,
+        totalReturn: sp500Value - stockData.initialAmount - stockData.monthlyAmount * 12 * stockData.years,
       },
       winner: userValue > sp500Value ? "user" : "sp500",
       difference: Math.abs(userValue - sp500Value),
@@ -212,57 +219,38 @@ export function calculateInvestmentComparison(
     const realEstateData = formData as RealEstateFormData;
     const realEstateResults = calculateRealEstateReturns(realEstateData);
 
-    // If renting instead of buying:
-    // 1. Invest the down payment
-    // 2. Each month, pay rent but save the difference vs ownership costs
-    const monthlyRent = realEstateData.monthlyRentSavings; // What rent would be
-    const monthlyOwnershipCost = realEstateResults.monthlyExpenses; // Total cost to own
-
-    // If owning costs MORE than renting, that's money saved by renting
-    // If owning costs LESS than renting, renter pays more (negative contribution)
-    const monthlySavingsByRenting = monthlyOwnershipCost - monthlyRent;
-
-    // Calculate S&P 500 with down payment + monthly savings
-    const sp500Value = calculateSP500Comparison(
-      realEstateData.downPayment,
-      monthlySavingsByRenting, // This could be positive (saving) or negative (costing more)
-      realEstateData.years
-    );
+    const initialCash = realEstateData.downPayment +
+      realEstateData.propertyValue * (realEstateData.purchaseCostPercent ?? 0) / 100;
+    const ownerValue = realEstateResults.saleProceeds + realEstateResults.ownerPortfolio;
+    const sp500Value = realEstateResults.renterPortfolio;
+    const firstMonthSavings = realEstateResults.monthlyCashFlow;
 
     return {
       user: {
         name: realEstateData.name || "Real Estate",
-        futureValue: realEstateResults.totalEquity ?? 0, // Use total equity, not property value (default to 0 if undefined)
-        initialInvestment: realEstateData.downPayment,
+        futureValue: ownerValue,
+        initialInvestment: initialCash,
         years: realEstateData.years,
         rate: realEstateResults.annualizedReturn,
         details: realEstateResults,
         netReturn: realEstateResults.annualizedReturn,
         totalReturn:
-          (realEstateResults.totalEquity ?? 0) - realEstateData.downPayment,
-        monthlyContribution: 0, // No additional monthly investment for real estate
+          ownerValue - initialCash - realEstateResults.ownerDeposits + realEstateResults.totalCashFlow,
+        monthlyContribution: Math.max(0, firstMonthSavings),
       },
       sp500: {
         name: "S&P 500 (Renting)",
         futureValue: sp500Value,
-        initialInvestment: realEstateData.downPayment,
-        monthlyContribution: monthlySavingsByRenting,
+        initialInvestment: initialCash,
+        monthlyContribution: Math.max(0, -firstMonthSavings),
         years: realEstateData.years,
-        rate: 7,
-        netReturn:
-          sp500Value > 0
-            ? (Math.pow(
-                sp500Value / realEstateData.downPayment,
-                1 / realEstateData.years
-              ) -
-                1) *
-              100
-            : -100,
-        totalReturn: sp500Value - realEstateData.downPayment,
+        rate: SP500_RATE,
+        netReturn: SP500_RATE,
+        totalReturn: sp500Value - initialCash - realEstateResults.renterDeposits,
       },
       winner:
-        (realEstateResults.totalEquity ?? 0) > sp500Value ? "user" : "sp500",
-      difference: Math.abs((realEstateResults.totalEquity ?? 0) - sp500Value),
+        ownerValue > sp500Value ? "user" : "sp500",
+      difference: Math.abs(ownerValue - sp500Value),
     };
   }
 }

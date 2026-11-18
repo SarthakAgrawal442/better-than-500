@@ -15,12 +15,12 @@ describe("Stock Calculations", () => {
   describe("calculateStockGrowth", () => {
     it("should calculate future value with no monthly contributions", () => {
       const result = calculateStockGrowth(1000, 0, 7, 10);
-      expect(result).toBeCloseTo(2009.66, 1); // Adjusted to actual result
+      expect(result).toBeCloseTo(1967.15, 1); // Adjusted to actual result
     });
 
     it("should calculate future value with monthly contributions", () => {
       const result = calculateStockGrowth(1000, 100, 7, 10);
-      expect(result).toBeCloseTo(19318.14, 1); // Adjusted to actual result
+      expect(result).toBeCloseTo(19072.32, 1); // Adjusted to actual result
     });
 
     it("should handle zero interest rate", () => {
@@ -30,7 +30,7 @@ describe("Stock Calculations", () => {
 
     it("should handle single year investment", () => {
       const result = calculateStockGrowth(1000, 100, 7, 1);
-      expect(result).toBeCloseTo(2311.55, 1); // Adjusted to actual result
+      expect(result).toBeCloseTo(2308.03, 1); // Adjusted to actual result
     });
   });
 
@@ -53,7 +53,7 @@ describe("Real Estate Calculations", () => {
 
     it("should handle zero values gracefully", () => {
       expect(calculateMortgagePayment(0, 4, 30)).toBe(0);
-      expect(calculateMortgagePayment(400000, 0, 30)).toBe(0);
+      expect(calculateMortgagePayment(400000, 0, 30)).toBeCloseTo(400000 / 360);
       expect(calculateMortgagePayment(400000, 4, 0)).toBe(0);
     });
 
@@ -79,6 +79,33 @@ describe("Real Estate Calculations", () => {
       monthlyRentSavings: 1800,
       years: 10,
     };
+
+    it("tracks zero-rate debt and redirects savings after payoff", () => {
+      const inputs = { ...mockRealEstateData, propertyValue: 22000, downPayment: 10000,
+        annualRate: 0, loanTermYears: 2, monthlyTax: 0, monthlyHOA: 0,
+        monthlyMaintenance: 0, monthlyInsurance: 0, monthlyRentSavings: 500,
+        annualAppreciation: 0, years: 1 };
+      expect(calculateRealEstateReturns(inputs).remainingMortgage).toBeCloseTo(6000);
+      const result = calculateRealEstateReturns({ ...inputs, years: 3 });
+      expect(result.remainingMortgage).toBe(0);
+      expect(result.ownerDeposits).toBe(6000);
+      expect(result.renterPortfolio).toBeCloseTo(10000 * 1.07 ** 3);
+    });
+
+    it("includes transaction costs, annual growth and equal initial cash", () => {
+      const result = calculateRealEstateReturns({ ...mockRealEstateData,
+        downPayment: 500000, years: 2, rentGrowth: 10, expenseGrowth: 20,
+        purchaseCostPercent: 2, saleCostPercent: 5 });
+      expect(result.saleProceeds).toBeCloseTo(500000 * 1.03 ** 2 * 0.95);
+      expect(result.renterPortfolio).toBeCloseTo(510000 * 1.07 ** 2);
+      expect(result.ownerDeposits).toBeCloseTo(12 * (1800 - 625 + 1980 - 750));
+    });
+
+    it("recovers the appreciation rate for a cash buyer with matched housing costs", () => {
+      const result = calculateRealEstateReturns({ ...mockRealEstateData,
+        downPayment: 500000, monthlyRentSavings: 625 });
+      expect(result.annualizedReturn).toBeCloseTo(3, 8);
+    });
 
     it("should calculate property appreciation correctly", () => {
       const result = calculateRealEstateReturns(mockRealEstateData);

@@ -81,7 +81,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
             <div className="space-y-2 sm:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs sm:text-sm text-gray-700">
-                  {type === "realestate" ? "Total Equity:" : "Final Value:"}
+                  {type === "realestate" ? "Ending wealth:" : "Final Value:"}
                 </span>
                 <span
                   className={`text-lg sm:text-2xl font-bold ${
@@ -94,10 +94,10 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-xs sm:text-sm text-gray-700">
-                  Annual Return:
+                  {type === "realestate" ? "Housing IRR:" : "Annual Return:"}
                 </span>
                 <span className="text-xs sm:text-sm font-semibold">
-                  {formatPercentage(user.rate)}
+                  {Number.isFinite(user.rate) ? formatPercentage(user.rate) : "Unavailable"}
                 </span>
               </div>
 
@@ -114,7 +114,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
                 user.monthlyContribution > 0 && (
                   <div className="flex justify-between items-center">
                     <span className="text-xs sm:text-sm text-gray-700">
-                      Monthly:
+                      {type === "realestate" ? "First month invested:" : "Monthly:"}
                     </span>
                     <span className="text-xs sm:text-sm font-medium">
                       {formatCurrency(user.monthlyContribution)}
@@ -178,7 +178,7 @@ function SimpleResults({ data, type, onClear }: SimpleResultsProps) {
                   <span className="text-xs sm:text-sm text-gray-700">
                     {type === "realestate"
                       ? sp500.monthlyContribution >= 0
-                        ? "Monthly:"
+                        ? "First month invested:"
                         : "Extra Cost:"
                       : "Monthly:"}
                   </span>

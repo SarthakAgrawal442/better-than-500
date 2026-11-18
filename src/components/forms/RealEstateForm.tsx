@@ -20,6 +20,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
     monthlyMaintenance: REAL_ESTATE_DEFAULTS.maintenance.toString(),
     annualAppreciation: REAL_ESTATE_DEFAULTS.appreciation.toString(),
     estimatedMonthlyRentSavings: REAL_ESTATE_DEFAULTS.rentSavings.toString(),
+    purchaseCostPercent: "0",
+    saleCostPercent: "0",
+    rentGrowth: "0",
+    expenseGrowth: "0",
     years: "10",
   });
 
@@ -57,6 +61,10 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       monthlyMaintenance: parseFloat(formData.monthlyMaintenance) || 0,
       annualAppreciation: parseFloat(formData.annualAppreciation) || 0,
       monthlyRentSavings: parseFloat(formData.estimatedMonthlyRentSavings) || 0,
+      purchaseCostPercent: Number(formData.purchaseCostPercent),
+      saleCostPercent: Number(formData.saleCostPercent),
+      rentGrowth: Number(formData.rentGrowth),
+      expenseGrowth: Number(formData.expenseGrowth),
       years: parseInt(formData.years) || 1,
     };
 
@@ -297,7 +305,23 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
         </div>
       </div>
 
-      {/* Submit Button */}
+      <fieldset className="grid gap-3 sm:grid-cols-2">
+        <legend className="font-semibold">Comparison assumptions</legend>
+        {([
+          ["purchaseCostPercent", "Purchase costs (% of purchase price)"],
+          ["saleCostPercent", "Selling costs (% of final home value)"],
+          ["rentGrowth", "Annual rent growth (%)"],
+          ["expenseGrowth", "Annual growth in non-mortgage ownership costs (%)"],
+        ] as const).map(([key, label]) => (
+          <label key={key} className="text-sm">{label}
+            <input className="w-full rounded-lg border p-2" type="number"
+              min={key.endsWith("Growth") ? -100 : 0} max={100}
+              step="any" value={formData[key]} onChange={e => updateField(key, e.target.value)} />
+          </label>
+        ))}
+      </fieldset>
+      <p className="text-sm text-gray-600">Both households invest monthly savings at an assumed 7% effective annual total return with dividends reinvested. Use nominal dollars. Results are before income and capital gains taxes. Growth in rent and recurring expenses starts in year two.</p>
+
       <button
         type="submit"
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
