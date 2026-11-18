@@ -17,9 +17,9 @@ describe("StockForm", () => {
     render(<StockForm onSubmit={mockOnSubmit} />);
 
     expect(
-      screen.getByText("Compare Stocks/ETFs vs S&P 500")
+      screen.getByText("Compare an investment")
     ).toBeInTheDocument();
-    expect(screen.getByDisplayValue("Choose preset...")).toBeInTheDocument(); // Use display value instead
+    expect(screen.getByRole("combobox")).toBeInTheDocument(); // Use display value instead
     expect(screen.getByPlaceholderText("e.g., VFIAX, QQQ")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("1000")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("100")).toBeInTheDocument();
@@ -46,6 +46,7 @@ describe("StockForm", () => {
     const user = userEvent.setup();
     render(<StockForm onSubmit={mockOnSubmit} />);
 
+    await user.click(screen.getByText("Customize investment"));
     const nameInput = screen.getByPlaceholderText("e.g., VFIAX, QQQ");
     const initialInput = screen.getByPlaceholderText("1000");
 
@@ -62,7 +63,7 @@ describe("StockForm", () => {
     const user = userEvent.setup();
     render(<StockForm onSubmit={mockOnSubmit} />);
 
-    const presetSelect = screen.getByDisplayValue("Choose preset...");
+    const presetSelect = screen.getByRole("combobox");
     await user.selectOptions(presetSelect, "1"); // NASDAQ 100 preset
 
     await waitFor(() => {
@@ -152,6 +153,7 @@ describe("StockForm", () => {
     render(<StockForm onSubmit={mockOnSubmit} />);
 
     // Update all fields using placeholder text
+    await user.click(screen.getByText("Customize investment"));
     await user.clear(screen.getByPlaceholderText("e.g., VFIAX, QQQ"));
     await user.type(
       screen.getByPlaceholderText("e.g., VFIAX, QQQ"),
@@ -192,6 +194,7 @@ describe("StockForm", () => {
     const user = userEvent.setup();
     render(<StockForm onSubmit={mockOnSubmit} />);
 
+    await user.click(screen.getByText("Customize investment"));
     const nameInput = screen.getByPlaceholderText("e.g., VFIAX, QQQ");
     await user.clear(nameInput);
 

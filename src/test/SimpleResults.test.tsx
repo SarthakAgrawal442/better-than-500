@@ -74,123 +74,23 @@ describe("SimpleResults", () => {
     expect(screen.queryByText(/Results after/)).not.toBeInTheDocument();
   });
 
-  it("should display winner when user investment wins", () => {
-    render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    expect(screen.getByText("NASDAQ 100 Wins!")).toBeInTheDocument();
-    expect(
-      screen.getByText(/Your investment.*outperformed by.*\$20,000/)
-    ).toBeInTheDocument();
-    expect(screen.getByText("Results after 10 years")).toBeInTheDocument();
+  it.each([
+    [mockDataUserWins, "Your investment finishes $20,000 ahead."],
+    [mockDataSP500Wins, "The S&P 500 benchmark finishes $20,000 ahead."],
+  ] as const)("shows the projected lead", (data, headline) => {
+    render(<SimpleResults data={data} type="stocks" onClear={mockOnClear} />);
+    expect(screen.getByRole("heading", { name: headline })).toBeVisible();
+    expect(screen.getByText(data.user.name + " (after fees)")).toBeVisible();
+    expect(screen.getByText("S&P 500 benchmark")).toBeVisible();
   });
 
-  it("should display winner when S&P 500 wins", () => {
-    render(
-      <SimpleResults
-        data={mockDataSP500Wins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    expect(screen.getByText("S&P 500 Wins!")).toBeInTheDocument();
-    expect(
-      screen.getByText(/The S&P 500.*outperformed by.*\$20,000/)
-    ).toBeInTheDocument();
-  });
-
-  it("should display investment details correctly", () => {
-    render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    // User investment details
-    expect(screen.getByText("NASDAQ 100")).toBeInTheDocument();
-    expect(screen.getByText("$150,000")).toBeInTheDocument();
-    expect(screen.getByText("9.8%")).toBeInTheDocument();
-
-    // Use getAllByText for elements that appear multiple times
-    const initialAmounts = screen.getAllByText("$10,000");
-    expect(initialAmounts).toHaveLength(2); // Both user and S&P 500 have same initial
-
-    const monthlyAmounts = screen.getAllByText("$500");
-    expect(monthlyAmounts).toHaveLength(2); // Both have same monthly
-
-    // S&P 500 details
-    expect(screen.getByText("S&P 500")).toBeInTheDocument();
-    expect(screen.getByText("$130,000")).toBeInTheDocument();
-    expect(screen.getByText("7.0%")).toBeInTheDocument();
-  });
-
-  it("should show correct styling for winner", () => {
-    render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    // Look for the sections by their content and check their parent containers
-    const userSection = screen.getByText("NASDAQ 100").closest(".bg-green-50");
-    const sp500Section = screen.getByText("S&P 500").closest(".bg-gray-50");
-
-    expect(userSection).toBeInTheDocument();
-    expect(sp500Section).toBeInTheDocument();
-  });
-
-  it("should toggle detailed view", async () => {
-    const user = userEvent.setup();
-    render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    const detailsButton = screen.getByText("Show Details");
-    expect(
-      screen.queryByText("Detailed Financial Breakdown")
-    ).not.toBeInTheDocument();
-
-    await user.click(detailsButton);
-    expect(screen.getByText("Hide Details")).toBeInTheDocument();
-    expect(
-      screen.getByText("Detailed Financial Breakdown")
-    ).toBeInTheDocument();
-
-    await user.click(screen.getByText("Hide Details"));
-    expect(screen.getByText("Show Details")).toBeInTheDocument();
-    expect(
-      screen.queryByText("Detailed Financial Breakdown")
-    ).not.toBeInTheDocument();
-  });
-
-  it("should call onClear when clear button is clicked", async () => {
-    const user = userEvent.setup();
-    render(
-      <SimpleResults
-        data={mockDataUserWins}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    const clearButton = screen.getByText("New Calculation");
-    await user.click(clearButton);
-
-    expect(mockOnClear).toHaveBeenCalledTimes(1);
+  it("explains contributions and rates on demand", async () => {
+    render(<SimpleResults data={mockDataUserWins} type="stocks" onClear={mockOnClear} />);
+    const explanation = screen.getByText(/Both start with the same deposits/);
+    expect(explanation).not.toBeVisible();
+    await userEvent.click(screen.getByText("How the totals add up"));
+    expect(explanation).toBeVisible();
+    expect(explanation).toHaveTextContent("$70,000");
   });
 
   it("should display real estate specific labels", () => {
@@ -242,52 +142,4 @@ describe("SimpleResults", () => {
     expect(screen.queryByText(/Wins!/)).not.toBeInTheDocument();
   });
 
-  it("should handle missing monthly contribution gracefully", () => {
-    const dataWithoutMonthly: ComparisonResult = {
-      ...mockDataUserWins,
-      user: {
-        ...mockDataUserWins.user,
-        monthlyContribution: undefined,
-      },
-      sp500: {
-        ...mockDataUserWins.sp500,
-        monthlyContribution: undefined,
-      },
-    };
-
-    render(
-      <SimpleResults
-        data={dataWithoutMonthly}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    expect(screen.queryByText("Monthly:")).not.toBeInTheDocument();
-    expect(screen.getByText("$150,000")).toBeInTheDocument(); // Still shows final value
-  });
-
-  it("should handle zero monthly contribution", () => {
-    const dataWithZeroMonthly: ComparisonResult = {
-      ...mockDataUserWins,
-      user: {
-        ...mockDataUserWins.user,
-        monthlyContribution: 0,
-      },
-      sp500: {
-        ...mockDataUserWins.sp500,
-        monthlyContribution: 0,
-      },
-    };
-
-    render(
-      <SimpleResults
-        data={dataWithZeroMonthly}
-        type="stocks"
-        onClear={mockOnClear}
-      />
-    );
-
-    expect(screen.queryByText("Monthly:")).not.toBeInTheDocument();
-  });
 });

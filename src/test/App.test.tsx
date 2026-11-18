@@ -15,7 +15,7 @@ describe("App Integration", () => {
     expect(screen.getByText("Stocks/ETF")).toBeInTheDocument();
     expect(screen.getByText("Real Estate")).toBeInTheDocument();
     expect(
-      screen.getByText("Compare Stocks/ETFs vs S&P 500")
+      screen.getByText("Compare an investment")
     ).toBeInTheDocument();
   });
 
@@ -25,7 +25,7 @@ describe("App Integration", () => {
 
     // Initially on stocks tab
     expect(
-      screen.getByText("Compare Stocks/ETFs vs S&P 500")
+      screen.getByText("Compare an investment")
     ).toBeInTheDocument();
     expect(
       screen.queryByText("Home vs Rent + S&P 500")
@@ -37,7 +37,7 @@ describe("App Integration", () => {
 
     expect(screen.getByText("Home vs Rent + S&P 500")).toBeInTheDocument();
     expect(
-      screen.queryByText("Compare Stocks/ETFs vs S&P 500")
+      screen.queryByText("Compare an investment")
     ).not.toBeInTheDocument();
 
     // Click back to stocks tab
@@ -45,7 +45,7 @@ describe("App Integration", () => {
     await user.click(stocksTab);
 
     expect(
-      screen.getByText("Compare Stocks/ETFs vs S&P 500")
+      screen.getByText("Compare an investment")
     ).toBeInTheDocument();
     expect(
       screen.queryByText("Home vs Rent + S&P 500")
@@ -57,6 +57,7 @@ describe("App Integration", () => {
     render(<App />);
 
     // Fill out the stock form using placeholder text
+    await user.click(screen.getByText("Customize investment"));
     await user.clear(screen.getByPlaceholderText("e.g., VFIAX, QQQ"));
     await user.type(
       screen.getByPlaceholderText("e.g., VFIAX, QQQ"),
@@ -83,15 +84,12 @@ describe("App Integration", () => {
 
     // Check for results
     await waitFor(() => {
-      expect(screen.getByText(/Results after 5 years/)).toBeInTheDocument();
-      expect(screen.getByText("Test Investment")).toBeInTheDocument();
-      expect(screen.getByText("S&P 500")).toBeInTheDocument();
+      expect(screen.getByText(/Estimate after 5 years/)).toBeInTheDocument();
+      expect(screen.getByText("Test Investment (after fees)")).toBeInTheDocument();
+      expect(screen.getByText("S&P 500 benchmark")).toBeInTheDocument();
     });
 
-    // Check that winner is determined
-    const winnerText = screen.getByText(/Wins!/);
-    expect(winnerText).toBeInTheDocument();
-    expect(winnerText.textContent).toMatch(/(Test Investment|S&P 500) Wins!/);
+    expect(screen.getByRole("heading", { name: /Your investment finishes/ })).toBeVisible();
   });
 
   it("should complete full real estate investment flow", async () => {
@@ -148,22 +146,22 @@ describe("App Integration", () => {
 
     // Wait for results
     await waitFor(() => {
-      expect(screen.getByText(/Results after/)).toBeInTheDocument();
+      expect(screen.getByText(/Estimate after/)).toBeInTheDocument();
     });
 
     // Click show details
-    const detailsButton = screen.getByText("Show Details");
+    const detailsButton = screen.getByText("How the totals add up");
     await user.click(detailsButton);
 
     // Check for detailed breakdown
     await waitFor(() => {
       expect(
-        screen.getByText("Detailed Financial Breakdown")
+        screen.getByText(/Both start with the same deposits/)
       ).toBeInTheDocument();
     });
   });
 
-  it("should clear results when new calculation button is clicked", async () => {
+  it("should clear results when an amount changes", async () => {
     const user = userEvent.setup();
     render(<App />);
 
@@ -175,17 +173,15 @@ describe("App Integration", () => {
 
     // Wait for results
     await waitFor(() => {
-      expect(screen.getByText(/Results after/)).toBeInTheDocument();
+      expect(screen.getByText(/Estimate after/)).toBeInTheDocument();
     });
 
-    // Click new calculation
-    const newCalcButton = screen.getByText("New Calculation");
-    await user.click(newCalcButton);
+    await user.clear(screen.getByPlaceholderText("1000"));
 
     // Results should be gone
-    expect(screen.queryByText(/Results after/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Estimate after/)).not.toBeInTheDocument();
     expect(
-      screen.getByText("Compare Stocks/ETFs vs S&P 500")
+      screen.getByText("Compare an investment")
     ).toBeInTheDocument();
   });
 
@@ -201,7 +197,7 @@ describe("App Integration", () => {
 
     // Wait for results
     await waitFor(() => {
-      expect(screen.getByText(/Results after/)).toBeInTheDocument();
+      expect(screen.getByText(/Estimate after/)).toBeInTheDocument();
     });
 
     // Switch to real estate tab
@@ -209,7 +205,7 @@ describe("App Integration", () => {
     await user.click(realEstateTab);
 
     // Results should be cleared
-    expect(screen.queryByText(/Results after/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Estimate after/)).not.toBeInTheDocument();
     expect(screen.getByText("Home vs Rent + S&P 500")).toBeInTheDocument();
   });
 
@@ -227,6 +223,6 @@ describe("App Integration", () => {
     await user.click(submitButton);
 
     // Should not show results
-    expect(screen.queryByText(/Results after/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Estimate after/)).not.toBeInTheDocument();
   });
 });

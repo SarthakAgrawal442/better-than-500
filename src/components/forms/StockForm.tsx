@@ -17,14 +17,19 @@ function StockForm({ onSubmit }: StockFormProps) {
     years: "10",
   });
 
+  const [preset, setPreset] = useState("0");
+  const [editing, setEditing] = useState(false);
+
   // Update any form field
   const updateField = (field: keyof typeof formData, value: string) => {
+    if (["name", "returnRate", "feeRate"].includes(field)) setPreset("");
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Apply preset values to form
   const applyPreset = (presetIndex: string) => {
-    if (presetIndex === "") return;
+    setPreset(presetIndex);
+    if (presetIndex === "") { setEditing(true); return; }
 
     const preset = INVESTMENT_PRESETS[parseInt(presetIndex)];
     setFormData((prev) => ({
@@ -67,21 +72,21 @@ function StockForm({ onSubmit }: StockFormProps) {
       {/* Header */}
       <div>
         <h2 className="text-sm sm:text-lg font-bold text-gray-800">
-          Compare Stocks/ETFs vs S&P 500
+          Compare an investment
         </h2>
       </div>
 
       {/* Quick Presets */}
       <div>
         <label htmlFor="StockForm-quick-presets" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-          Investment preset
+          Investment
         </label>
         <select id="StockForm-quick-presets"
           onChange={(e) => applyPreset(e.target.value)}
           className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-          defaultValue=""
+          value={preset}
         >
-          <option value="">Choose preset...</option>
+          <option value="">Custom investment</option>
           {INVESTMENT_PRESETS.map((preset, index) => (
             <option key={index} value={index}>
               {preset.name} — {preset.returnRate}% return
@@ -90,25 +95,11 @@ function StockForm({ onSubmit }: StockFormProps) {
         </select>
       </div>
 
-      {/* Investment Name */}
-      <div>
-        <label htmlFor="StockForm-investment-name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-          Investment Name
-        </label>
-        <input id="StockForm-investment-name"
-          type="text"
-          placeholder="e.g., VFIAX, QQQ"
-          className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          value={formData.name}
-          onChange={(e) => updateField("name", e.target.value)}
-        />
-      </div>
-
       {/* Initial Amount and Monthly Contribution */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <div>
           <label htmlFor="StockForm-initial" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Initial ($)
+            Starting amount ($)
           </label>
           <input id="StockForm-initial"
             type="number"
@@ -123,7 +114,7 @@ function StockForm({ onSubmit }: StockFormProps) {
         </div>
         <div>
           <label htmlFor="StockForm-monthly" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Monthly ($)
+            Add each month ($)
           </label>
           <input id="StockForm-monthly"
             type="number"
@@ -131,39 +122,6 @@ function StockForm({ onSubmit }: StockFormProps) {
             className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={formData.monthlyAmount}
             onChange={(e) => updateField("monthlyAmount", e.target.value)}
-            min="0"
-            step="any"
-          />
-        </div>
-      </div>
-
-      {/* Return Rate and Fees */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4">
-        <div>
-          <label htmlFor="StockForm-return" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Return (%)
-          </label>
-          <input id="StockForm-return"
-            type="number"
-            placeholder="7"
-            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.returnRate}
-            onChange={(e) => updateField("returnRate", e.target.value)}
-            min="0"
-            step="any"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="StockForm-fees" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-            Fees (%)
-          </label>
-          <input id="StockForm-fees"
-            type="number"
-            placeholder="0.1"
-            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            value={formData.feeRate}
-            onChange={(e) => updateField("feeRate", e.target.value)}
             min="0"
             step="any"
           />
@@ -187,6 +145,56 @@ function StockForm({ onSubmit }: StockFormProps) {
         />
       </div>
 
+      <details className="assumptions space-y-3" open={editing} onToggle={e => setEditing(e.currentTarget.open)}>
+        <summary>Customize investment</summary>
+      {/* Investment Name */}
+      <div>
+        <label htmlFor="StockForm-investment-name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+          Investment Name
+        </label>
+        <input id="StockForm-investment-name"
+          type="text"
+          placeholder="e.g., VFIAX, QQQ"
+          className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          value={formData.name}
+          onChange={(e) => updateField("name", e.target.value)}
+        />
+      </div>
+
+      {/* Return Rate and Fees */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
+        <div>
+          <label htmlFor="StockForm-return" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Annual return (%)
+          </label>
+          <input id="StockForm-return"
+            type="number"
+            placeholder="7"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.returnRate}
+            onChange={(e) => updateField("returnRate", e.target.value)}
+            min="0"
+            step="any"
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="StockForm-fees" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+            Annual fee (%)
+          </label>
+          <input id="StockForm-fees"
+            type="number"
+            placeholder="0.1"
+            className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.feeRate}
+            onChange={(e) => updateField("feeRate", e.target.value)}
+            min="0"
+            step="any"
+          />
+        </div>
+      </div>
+
+      </details>
       {/* Submit Button */}
       <button
         type="submit"
