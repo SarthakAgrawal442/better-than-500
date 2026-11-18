@@ -7,6 +7,13 @@ import type {
   InvestmentType,
 } from "../types/types";
 
+function finiteProjection(value: number): number {
+  if (!Number.isFinite(value)) {
+    throw new RangeError("These inputs exceed the calculator’s numeric range. Reduce the amounts or rates.");
+  }
+  return value;
+}
+
 /**
  * Calculate future value of stock/ETF investment with monthly contributions
  */
@@ -16,21 +23,18 @@ export function calculateStockGrowth(
   annualRate: number,
   years: number
 ): number {
-  const monthlyRate = Math.expm1(Math.log1p(annualRate / 100) / 12);
-  const totalMonths = years * 12;
+  if (!Number.isFinite(annualRate) || annualRate < -100) {
+    throw new RangeError("Annual return after fees must be at least −100%.");
+  }
+  if (years === 0) return initialAmount;
+  // With a complete loss each month, only the last end-of-month deposit survives.
+  if (annualRate === -100) return monthlyAmount;
 
-  // Future value of initial lump sum
-  const futureValueOfInitial =
-    initialAmount * Math.pow(1 + monthlyRate, totalMonths);
-
-  // Future value of monthly contributions
-  const futureValueOfMonthly =
-    monthlyRate === 0
-      ? monthlyAmount * totalMonths
-      : monthlyAmount *
-        ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate);
-
-  return futureValueOfInitial + futureValueOfMonthly;
+  const annualLogGrowth = Math.log1p(annualRate / 100);
+  const monthlyRate = Math.expm1(annualLogGrowth / 12);
+  const logGrowth = annualLogGrowth * years;
+  const depositFactor = monthlyRate === 0 ? years * 12 : Math.expm1(logGrowth) / monthlyRate;
+  return finiteProjection(initialAmount * Math.exp(logGrowth) + monthlyAmount * depositFactor);
 }
 
 /**
@@ -56,12 +60,9 @@ export function calculateMortgagePayment(
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
-  if (annualRate === 0) return principal / numPayments;
-
-  return (
-    (principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
-    (Math.pow(1 + monthlyRate, numPayments) - 1)
-  );
+  if (monthlyRate === 0) return principal / numPayments;
+  const discount = -Math.expm1(-numPayments * Math.log1p(monthlyRate));
+  return finiteProjection(principal * (monthlyRate / discount));
 }
 
 /**
@@ -84,6 +85,9 @@ export function calculateRealEstateReturns(
     monthlyRentSavings,
   } = propertyData;
 
+  if (!Number.isInteger(years) || years < 1 || years > 50) {
+    throw new RangeError("Enter a holding period of 1 to 50 whole years.");
+  }
   // Basic calculations
   const loanAmount = propertyValue - downPayment;
   const monthlyMortgage = calculateMortgagePayment(
@@ -106,7 +110,14 @@ export function calculateRealEstateReturns(
   let renterPortfolio = startingCash;
   let ownerDeposits = 0;
   let renterDeposits = 0;
-  let remainingBalance = loanAmount;
+  const termMonths = loanTermYears * 12;
+  const monthsLeft = Math.max(0, termMonths - years * 12);
+  const monthlyRate = annualRate / 1200;
+  // Value the remaining scheduled payments directly to avoid accumulated rounding error.
+  const remainingBalance = monthlyRate === 0
+    ? loanAmount * (monthsLeft / termMonths)
+    : loanAmount * (Math.expm1(-monthsLeft * Math.log1p(monthlyRate)) /
+        Math.expm1(-termMonths * Math.log1p(monthlyRate)));
   let totalCashFlow = 0;
   let annualExpenses = 0;
   const flows = [-startingCash];
@@ -114,10 +125,7 @@ export function calculateRealEstateReturns(
   for (let month = 0; month < years * 12; month++) {
     const year = Math.floor(month / 12);
     const rent = monthlyRentSavings * (1 + (propertyData.rentGrowth ?? 0) / 100) ** year;
-    const interest = remainingBalance * annualRate / 1200;
     const payment = month < loanTermYears * 12 ? monthlyMortgage : 0;
-    remainingBalance = month + 1 >= loanTermYears * 12
-      ? 0 : Math.max(0, remainingBalance + interest - payment);
     const expenses = payment + recurring * (1 + (propertyData.expenseGrowth ?? 0) / 100) ** year;
     const savings = rent - expenses;
     const ownerDeposit = Math.max(0, savings);
@@ -135,7 +143,9 @@ export function calculateRealEstateReturns(
   const totalEquity = futurePropertyValue - remainingBalance;
   const saleCosts = futurePropertyValue * (propertyData.saleCostPercent ?? 0) / 100;
   const saleProceeds = totalEquity - saleCosts;
-  flows[flows.length - 1] += saleProceeds;
+  [saleProceeds, ownerPortfolio, renterPortfolio, remainingBalance, totalCashFlow,
+    ownerDeposits, renterDeposits, annualExpenses].forEach(finiteProjection);
+  flows[flows.length - 1] = finiteProjection(flows[flows.length - 1] + saleProceeds);
   return {
     propertyValue, futurePropertyValue, totalEquity, saleCosts, saleProceeds,
     ownerPortfolio, renterPortfolio, ownerDeposits, renterDeposits,
@@ -221,7 +231,7 @@ export function calculateInvestmentComparison(
 
     const initialCash = realEstateData.downPayment +
       realEstateData.propertyValue * (realEstateData.purchaseCostPercent ?? 0) / 100;
-    const ownerValue = realEstateResults.saleProceeds + realEstateResults.ownerPortfolio;
+    const ownerValue = finiteProjection(realEstateResults.saleProceeds + realEstateResults.ownerPortfolio);
     const sp500Value = realEstateResults.renterPortfolio;
     const firstMonthSavings = realEstateResults.monthlyCashFlow;
 

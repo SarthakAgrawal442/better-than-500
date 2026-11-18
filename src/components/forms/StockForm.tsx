@@ -51,7 +51,7 @@ function StockForm({ onSubmit }: StockFormProps) {
       monthlyAmount: parseFloat(formData.monthlyAmount) || 0,
       returnRate: parseFloat(formData.returnRate) || 0,
       feeRate: parseFloat(formData.feeRate) || 0,
-      years: parseInt(formData.years) || 1,
+      years: Number(formData.years) || 1,
     };
 
     // Basic validation

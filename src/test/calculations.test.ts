@@ -23,6 +23,20 @@ describe("Stock Calculations", () => {
       expect(result).toBeCloseTo(19072.32, 1); // Adjusted to actual result
     });
 
+    it("preserves deposits at near-zero rates", () => {
+      expect(calculateStockGrowth(1000, 100, 1e-14, 10)).toBeCloseTo(13000, 8);
+      expect(calculateStockGrowth(1000, 100, -1e-14, 10)).toBeCloseTo(13000, 8);
+    });
+
+    it("distinguishes total loss from an impossible return", () => {
+      expect(calculateStockGrowth(1000, 100, -100, 10)).toBe(100);
+      expect(() => calculateStockGrowth(1000, 100, -101, 10)).toThrow(/after fees/);
+    });
+
+    it("rejects overflowing projections", () => {
+      expect(() => calculateStockGrowth(1e300, 1, 100, 50)).toThrow(/numeric range/);
+    });
+
     it("should handle zero interest rate", () => {
       const result = calculateStockGrowth(1000, 100, 0, 10);
       expect(result).toBe(13000); // 1000 + (100 * 120 months)
@@ -105,6 +119,19 @@ describe("Real Estate Calculations", () => {
       const result = calculateRealEstateReturns({ ...mockRealEstateData,
         downPayment: 500000, monthlyRentSavings: 625 });
       expect(result.annualizedReturn).toBeCloseTo(3, 8);
+    });
+
+    it("amortizes a near-zero rate without losing principal payments", () => {
+      const result = calculateRealEstateReturns({ ...mockRealEstateData, annualRate: 1e-14 });
+      expect(result.remainingMortgage).toBeCloseTo(400000 * 2 / 3, 6);
+      expect(result.monthlyExpenses).toBeCloseTo(400000 / 360 + 625, 6);
+    });
+
+    it("values the remaining payments even at steep mortgage rates", () => {
+      const result = calculateRealEstateReturns({ ...mockRealEstateData,
+        annualRate: 200, years: 29 });
+      const rate = 2 / 12;
+      expect(result.remainingMortgage).toBeCloseTo(400000 * (1 - (1 + rate) ** -12), 5);
     });
 
     it("should calculate property appreciation correctly", () => {

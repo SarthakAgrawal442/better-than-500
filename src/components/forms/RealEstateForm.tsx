@@ -54,7 +54,7 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       propertyValue: parseFloat(formData.propertyValue) || 0,
       downPayment: parseFloat(formData.downPayment) || 0,
       annualRate: parseFloat(formData.annualMortgageInterestRate) || 0,
-      loanTermYears: parseInt(formData.loanTermYears) || 30,
+      loanTermYears: Number(formData.loanTermYears) || 30,
       monthlyTax: parseFloat(formData.monthlyPropertyTax) || 0,
       monthlyHOA: parseFloat(formData.monthlyHoa) || 0,
       monthlyInsurance: parseFloat(formData.monthlyInsurance) || 0,
@@ -65,7 +65,7 @@ function RealEstateForm({ onSubmit }: RealEstateFormProps) {
       saleCostPercent: Number(formData.saleCostPercent),
       rentGrowth: Number(formData.rentGrowth),
       expenseGrowth: Number(formData.expenseGrowth),
-      years: parseInt(formData.years) || 1,
+      years: Number(formData.years) || 1,
     };
 
     // Basic validation
